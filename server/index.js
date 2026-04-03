@@ -47,6 +47,9 @@ const connectDB = async () => {
   const uri = process.env.MONGO_URI;
   const isProduction = process.env.NODE_ENV === 'production';
 
+  // Disable auto-indexing globally
+  mongoose.set('autoIndex', false);
+
   // If in production and no URI is provided, skip connection attempt to avoid ECONNREFUSED
   if (!uri && isProduction) {
     console.log('🌐 Production: no MONGO_URI provided. Switching to High-Performance Mock Mode.');
