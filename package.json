@@ -1,0 +1,14 @@
+{
+  "name": "aerolive",
+  "version": "1.0.0",
+  "description": "AeroLive - Full Stack MERN Flight Tracker",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\"",
+    "build": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
+    "start": "node server/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
