@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const cargoSchema = new mongoose.Schema({
-  awb: { type: String, required: true, unique: true, uppercase: true },
+  awb: { type: String, required: true, uppercase: true }, // Using explicit index instead of property to avoid Mongoose collision warnings
   shipper: { type: String, default: 'Unknown' },
   consignee: { type: String, default: 'Unknown' },
   origin: {
@@ -38,7 +38,7 @@ const cargoSchema = new mongoose.Schema({
   actualDelivery: Date
 }, { timestamps: true });
 
-// Removed redundant manual index definition as 'unique: true' handles it.
-// cargoSchema.index({ awb: 1 });
+// Unified explicit unique index for AWB field (Silences 'Duplicate schema index' warnings)
+cargoSchema.index({ awb: 1 }, { unique: true });
 
 module.exports = mongoose.model('Cargo', cargoSchema);
