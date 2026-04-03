@@ -9,10 +9,10 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        placeholder: "Enter your MongoDB Atlas Connection String (optional fallback to mock)"
+        sync: false
       - key: CLIENT_URL
-        placeholder: "Enter your Render Service URL (e.g., https://aerolive.onrender.com or leave blank)"
+        sync: false
       - key: AVIATIONSTACK_API_KEY
-        placeholder: "Enter your AviationStack API Key"
+        sync: false
       - key: PORT
         value: 10000
