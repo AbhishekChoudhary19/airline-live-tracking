@@ -3,6 +3,10 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
+
+// Definitive Silence: Disable auto-indexing at the VERY top before any models are loaded
+mongoose.set('autoIndex', false);
+
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const cron = require('node-cron');
@@ -47,8 +51,6 @@ const connectDB = async () => {
   const uri = process.env.MONGO_URI;
   const isProduction = process.env.NODE_ENV === 'production';
 
-  // Disable auto-indexing globally
-  mongoose.set('autoIndex', false);
 
   // If in production and no URI is provided, skip connection attempt to avoid ECONNREFUSED
   if (!uri && isProduction) {
