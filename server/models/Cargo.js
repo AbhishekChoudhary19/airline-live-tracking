@@ -38,6 +38,7 @@ const cargoSchema = new mongoose.Schema({
   actualDelivery: Date
 }, { timestamps: true });
 
-cargoSchema.index({ awb: 1 });
+// Removed redundant manual index definition as 'unique: true' handles it.
+// cargoSchema.index({ awb: 1 });
 
 module.exports = mongoose.model('Cargo', cargoSchema);

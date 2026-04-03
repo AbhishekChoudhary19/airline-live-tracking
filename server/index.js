@@ -43,16 +43,29 @@ app.use('/api/', limiter);
 
 // MongoDB Connection
 const connectDB = async () => {
+  const uri = process.env.MONGO_URI;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // If in production and no URI is provided, skip connection attempt to avoid ECONNREFUSED
+  if (!uri && isProduction) {
+    console.log('🌐 Production: no MONGO_URI provided. Switching to High-Performance Mock Mode.');
+    mongoose.set('bufferCommands', false);
+    return;
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/aerolive', {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    const conn = await mongoose.connect(uri || 'mongodb://localhost:27017/aerolive', {
+      serverSelectionTimeoutMS: 5000, 
       socketTimeoutMS: 45000,
     });
     console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
-    console.log(`❌ MongoDB connection failed: ${err.message}`);
-    console.log('⚠️ Running in Mock Database mode (In-memory)');
-    // Disable buffering so operations fail immediately instead of waiting for a connection
+    if (isProduction) {
+      console.log(`⚠️ Production connection failed: ${err.message}. Using Mock Mode.`);
+    } else {
+      console.log(`❌ MongoDB connection failed: ${err.message}`);
+      console.log('⚠️ Running in Mock Database mode (In-memory)');
+    }
     mongoose.set('bufferCommands', false); 
   }
 };

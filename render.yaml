@@ -12,15 +12,7 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
-      - key: AVIATIONSTACK_KEY
-        sync: false
-      - key: GOOGLE_CLIENT_ID
-        sync: false
-      - key: GOOGLE_CLIENT_SECRET
-        sync: false
-      - key: OPENSKY_USERNAME
-        sync: false
-      - key: OPENSKY_PASSWORD
+      - key: AVIATIONSTACK_API_KEY
         sync: false
       - key: PORT
         value: 10000
