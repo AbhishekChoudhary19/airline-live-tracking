@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const cargoSchema = new mongoose.Schema({
-  awb: { type: String, required: true, uppercase: true },
+  waybillNumber: { type: String, required: true, unique: true, uppercase: true, alias: 'awb' },
   shipper: { type: String, default: 'Unknown' },
   consignee: { type: String, default: 'Unknown' },
   origin: {
