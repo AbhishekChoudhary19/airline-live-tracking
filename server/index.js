@@ -65,6 +65,11 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
     });
     console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    
+    // Force index synchronization to purge duplicates from the actual database
+    const Cargo = require('./models/Cargo');
+    await Cargo.syncIndexes();
+    console.log('✅ MongoDB Indexes synchronized');
   } catch (err) {
     if (isProduction) {
       console.log(`⚠️ Production connection failed: ${err.message}. Using Mock Mode.`);
