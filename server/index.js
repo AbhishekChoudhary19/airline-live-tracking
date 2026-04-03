@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const cron = require('node-cron');
+const fs = require('fs');
 require('dotenv').config();
 
 const flightRoutes = require('./routes/flights');
@@ -79,16 +80,32 @@ app.use('/api/cargo', cargoRoutes);
 app.use('/api/airports', airportRoutes);
 app.use('/api/alerts', alertRoutes);
 
-// Serve static React build in production (Render)
-if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
-  app.use(express.static(clientBuildPath));
-}
-
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
+
+// Self-Healing Static Serving: Auto-detect React build folder
+const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+if (fs.existsSync(clientBuildPath)) {
+  console.log('📦 React build found. Serving static files...');
+  app.use(express.static(clientBuildPath));
+  
+  // Wildcard: serve React app for all non-API routes (React Router support)
+  app.get('*', (req, res) => {
+    const indexPath = path.join(clientBuildPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send('Build folder found, but index.html is missing. Check your build scripts.');
+    }
+  });
+} else {
+  console.log('⚠️ No React build found at:', clientBuildPath);
+  app.get('/', (req, res) => {
+    res.send('AeroLive API is running. (No frontend build detected - run npm run build)');
+  });
+}
 
 // Vercel Cron endpoint: fetch live flights and update cache
 app.get('/api/cron/fetch-flights', async (req, res) => {
@@ -173,13 +190,6 @@ if (!process.env.VERCEL) {
       cachedFlights = flights || [];
       console.log(`✈️  Initial flights loaded: ${cachedFlights.length}`);
     });
-  });
-}
-
-// Wildcard: serve React app for all non-API routes (React Router support)
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
   });
 }
 
