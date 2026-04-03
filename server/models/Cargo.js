@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const cargoSchema = new mongoose.Schema({
-  awb: { type: String, required: true, unique: true, uppercase: true },
+  awb: { type: String, required: true, uppercase: true }, // Index defined at bottom to avoid parser collision
   shipper: { type: String, default: 'Unknown' },
   consignee: { type: String, default: 'Unknown' },
   origin: {
@@ -38,6 +38,7 @@ const cargoSchema = new mongoose.Schema({
   actualDelivery: Date
 }, { timestamps: true });
 
-// Index warning silenced via server-side autoIndex: false
+// Absolute Silence: Define unique index explicitly on the schema
+cargoSchema.index({ awb: 1 }, { unique: true });
 
 module.exports = mongoose.model('Cargo', cargoSchema);
