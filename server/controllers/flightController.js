@@ -1,51 +1,26 @@
 const axios = require('axios');
 const Flight = require('../models/Flight');
 
-// OpenSky Token Cache
-let cachedToken = null;
-let tokenExpiry = 0;
-
-const getOpenSkyToken = async () => {
-  const now = Math.floor(Date.now() / 1000);
-  if (cachedToken && now < tokenExpiry - 60) return cachedToken;
-
-  const clientId = process.env.OPENSKY_USERNAME;
-  const clientSecret = process.env.OPENSKY_PASSWORD;
-  const tokenUrl = 'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token';
-
-  if (!clientId || !clientSecret || clientSecret.length < 20) {
-      console.log("OpenSky: Missing or invalid credentials in .env, using anonymous access.");
-      return null;
+// Basic Auth helper for OpenSky Network
+const getOpenSkyAuth = () => {
+  const username = process.env.OPENSKY_USERNAME;
+  const password = process.env.OPENSKY_PASSWORD;
+  
+  if (username && password) {
+    return {
+      auth: {
+        username: username,
+        password: password
+      }
+    };
   }
-
-  try {
-    const params = new URLSearchParams();
-    params.append('grant_type', 'client_credentials');
-    params.append('client_id', clientId);
-    params.append('client_secret', clientSecret);
-
-    const res = await axios.post(tokenUrl, params.toString(), {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      timeout: 10000
-    });
-
-    if (res.data && res.data.access_token) {
-      cachedToken = res.data.access_token;
-      tokenExpiry = now + (res.data.expires_in || 1800);
-      console.log("✅ OpenSky: New OAuth2 token obtained.");
-      return cachedToken;
-    }
-  } catch (err) {
-    console.error("OpenSky Auth Error:", err.response?.data || err.message);
-  }
-  return null;
+  
+  console.log("OpenSky: Missing credentials in .env, using anonymous access.");
+  return {};
 };
 
 // Fetch from OpenSky Network (free, real-time)
 const fetchFromOpenSky = async () => {
-  const username = process.env.OPENSKY_USERNAME;
-  const password = process.env.OPENSKY_PASSWORD;
-
   const config = {
     timeout: 10000,
     params: {
@@ -54,13 +29,9 @@ const fetchFromOpenSky = async () => {
       lomin: 68.0,
       lamax: 35.0,
       lomax: 97.0
-    }
+    },
+    ...getOpenSkyAuth()
   };
-
-  const token = await getOpenSkyToken();
-  if (token) {
-    config.headers = { 'Authorization': `Bearer ${token}` };
-  }
 
   const response = await axios.get('https://opensky-network.org/api/states/all', config);
 
@@ -85,12 +56,11 @@ const fetchFromOpenSky = async () => {
 
 // Fetch specific flight from OpenSky globally (no bounding box)
 const fetchSingleFlightFromOpenSky = async (icao24) => {
-  const username = process.env.OPENSKY_USERNAME;
-  const password = process.env.OPENSKY_PASSWORD;
-  const config = { timeout: 10000, params: { icao24 } };
-
-  const token = await getOpenSkyToken();
-  if (token) config.headers = { 'Authorization': `Bearer ${token}` };
+  const config = { 
+    timeout: 10000, 
+    params: { icao24 },
+    ...getOpenSkyAuth()
+  };
 
   try {
     const response = await axios.get('https://opensky-network.org/api/states/all', config);
@@ -372,13 +342,9 @@ const getFlightTrack = async (req, res) => {
   try {
     const config = {
       timeout: 15000,
-      params: { icao24: icao24.toLowerCase(), time: 0 }
+      params: { icao24: icao24.toLowerCase(), time: 0 },
+      ...getOpenSkyAuth()
     };
-
-    const token = await getOpenSkyToken();
-    if (token) {
-      config.headers = { 'Authorization': `Bearer ${token}` };
-    }
 
     const response = await axios.get('https://opensky-network.org/api/tracks/all', config);
     
