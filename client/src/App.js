@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { FlightProvider } from './context/FlightContext';
 import { AuthProvider } from './context/AuthContext';
@@ -12,7 +12,6 @@ import CargoTracker from './components/CargoTracker';
 import ChatBot from './components/ChatBot';
 import Toast from './components/Toast';
 import AuthModal from './components/AuthModal';
-import AlertSettings from './components/AlertSettings';
 import PriceComparison from './components/PriceComparison';
 import PickupMode from './components/PickupMode';
 import EmergencyTicker from './components/EmergencyTicker';
@@ -24,7 +23,7 @@ function MainPage() {
   const [activeTab, setActiveTab] = React.useState(0);
   const [toast, setToast] = React.useState(null);
   const [showAuth, setShowAuth] = React.useState(false);
-  const [showAlertSettings, setShowAlertSettings] = React.useState(false);
+
 
   const showToast = (msg, duration = 2500) => {
     setToast(msg);
@@ -61,7 +60,7 @@ function MainPage() {
     <div className="bg-zinc-950 min-h-screen text-white overflow-x-hidden flex flex-col">
       <EmergencyTicker />
       <div className="parallax-container flex-1">
-        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} showToast={showToast} setShowAuth={setShowAuth} setShowAlertSettings={setShowAlertSettings} />
+        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} showToast={showToast} setShowAuth={setShowAuth} />
         
         <div className="flex-1">
           {activeTab === 0 && (

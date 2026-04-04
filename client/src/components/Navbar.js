@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useFlights } from '../context/FlightContext';
 import { useAuth } from '../context/AuthContext';
 
-const Navbar = ({ activeTab, setActiveTab, showToast, setShowAuth, setShowAlertSettings }) => {
-  const { connected, setSearchQuery, searchQuery, loadFlight, setSelectedFlight } = useFlights();
+const Navbar = ({ activeTab, setActiveTab, showToast, setShowAuth }) => {
+  const { connected, setSearchQuery, loadFlight, setSelectedFlight } = useFlights();
   const { user, logout } = useAuth();
   const [localQ, setLocalQ] = useState('');
   const [showNavbar, setShowNavbar] = useState(true);

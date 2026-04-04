@@ -101,7 +101,7 @@ const LiveMap = ({ showToast }) => {
         mapInstanceRef.current?.invalidateSize({ animate: false });
       }, 2500); 
     }
-  }, [currentLayer, mapReady]);
+  }, [currentLayer, mapReady, isSwitching]);
 
   // Keep track of the active selected flight globally for the leaflet hooks
   useEffect(() => {
@@ -325,7 +325,7 @@ const LiveMap = ({ showToast }) => {
         markersRef.current[flight.icao24] = marker;
       }
     });
-  }, [filteredFlights, mapReady, loadFlight, setSelectedFlight, showToast]);
+  }, [filteredFlights, mapReady, loadFlight, setSelectedFlight, showToast, flights.length]);
 
   const flyToIndia = () => mapInstanceRef.current?.flyTo([20.5937, 78.9629], 5, { duration: 1.5 });
   const flyToWorld = () => mapInstanceRef.current?.flyTo([25, 75], 3, { duration: 1.5 });
