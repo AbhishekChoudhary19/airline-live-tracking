@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const cargoSchema = new mongoose.Schema({
-  awb: { type: String, required: true, unique: true, uppercase: true },
+  awb: { type: String, required: true, uppercase: true },
   shipper: { type: String, default: 'Unknown' },
   consignee: { type: String, default: 'Unknown' },
   origin: {
@@ -37,5 +37,7 @@ const cargoSchema = new mongoose.Schema({
   eta: Date,
   actualDelivery: Date
 }, { timestamps: true, autoIndex: false });
+
+cargoSchema.index({ awb: 1 }, { unique: true });
 
 module.exports = mongoose.model('Cargo', cargoSchema);

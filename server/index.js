@@ -60,7 +60,7 @@ const connectDB = async () => {
   }
 
   try {
-    const conn = await mongoose.connect(uri || 'mongodb://localhost:27017/aerolive', {
+    const conn = await mongoose.connect(uri || 'mongodb://127.0.0.1:27017/aerolive', {
       serverSelectionTimeoutMS: 5000, 
       socketTimeoutMS: 45000,
     });
