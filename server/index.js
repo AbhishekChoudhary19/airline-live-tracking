@@ -18,7 +18,7 @@ const cargoRoutes = require('./routes/cargo');
 const authRoutes = require('./routes/auth');
 const airportRoutes = require('./routes/airports');
 const alertRoutes = require('./routes/alerts');
-const { fetchLiveFlights, fetchAndCacheLiveFlights } = require('./controllers/flightController');
+const { fetchAndCacheLiveFlights } = require('./controllers/flightController');
 
 const app = express();
 const server = http.createServer(app);
